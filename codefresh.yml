@@ -36,7 +36,7 @@ steps:
     title: Applying apps
     stage: apps
     commands:
-      - chmod +x get-kubeconfig.sh && ./get-kubeconfig.sh $CLUSTER_NAME $REGION
+      - aws eks update-kubeconfig --name devops-catalog --region us-east-1 --alias devops-catalog 
       - export KUBECONFIG=kubeconfig.yaml
       - kubectl apply --filename https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/aws/deploy.yaml
       - kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
