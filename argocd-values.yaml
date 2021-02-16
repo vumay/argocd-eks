@@ -2,10 +2,7 @@ server:
   ingress:
     enabled: true
     hosts:
-    - argocd.54.198.122.127.xip.io
+    - acme.com
   extraArgs:
   - --insecure
 installCRDs: false
-controller:
-  args:
-    appResyncPeriod: 30
