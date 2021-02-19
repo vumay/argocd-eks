@@ -31,7 +31,7 @@ steps:
       branch:
         only:
           - master
-    apply_app:
+  apply_app:
     image: vfarcic/aws-helm-kubectl:2.0.47
     title: Applying apps
     stage: apps
