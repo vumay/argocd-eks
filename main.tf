@@ -106,6 +106,9 @@ resource "aws_security_group" "worker" {
   tags = {
     Name = "devops-catalog"
   }
+  timeouts {
+    delete = "40m"
+  }
 }
 
 data "aws_availability_zones" "available" {
@@ -121,6 +124,9 @@ resource "aws_subnet" "worker" {
   tags = {
     "Name"                                      = "devops-catalog"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+  }
+  timeouts {
+    delete = "40m"
   }
 }
 
