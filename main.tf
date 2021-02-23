@@ -106,6 +106,13 @@ resource "aws_security_group" "worker" {
   tags = {
     Name = "devops-catalog"
   }
+  timeouts {
+    delete = "40m"
+  }
+  depends_on = [
+    aws_iam_role_policy_attachment.cluster,
+    aws_iam_role_policy_attachment.service,
+  ]
 }
 
 data "aws_availability_zones" "available" {
@@ -122,6 +129,13 @@ resource "aws_subnet" "worker" {
     "Name"                                      = "devops-catalog"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
+  timeouts {
+    delete = "40m"
+  }
+  depends_on = [
+    aws_iam_role_policy_attachment.cluster,
+    aws_iam_role_policy_attachment.service,
+  ]
 }
 
 resource "aws_iam_role" "worker" {
