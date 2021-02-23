@@ -22,7 +22,7 @@ steps:
     title: Applying Terraform
     stage: apply
     commands:
-       terraform apply -auto-approve 
+      -  terraform apply -auto-approve 
       - export CLUSTER_NAME=$(terraform output -raw cluster_name)
       - export REGION=$(terraform output -raw region)
       - export DESTROY=$(terraform output -raw destroy)
