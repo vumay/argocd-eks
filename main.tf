@@ -130,8 +130,8 @@ resource "aws_subnet" "worker" {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }
   depends_on = [
-    aws_iam_role_policy_attachment.example-AmazonEKSClusterPolicy,
-    aws_iam_role_policy_attachment.example-AmazonEKSServicePolicy,
+    aws_iam_role_policy_attachment.cluster,
+    aws_iam_role_policy_attachment.service,
   ]
   timeouts {
     delete = "15m"
