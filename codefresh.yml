@@ -1,7 +1,9 @@
 version: "1.0"
 stages:
   - prepare
+  - before destroy
   - apply
+  - apps
 steps:
   main_clone:
     title: Cloning repository
@@ -16,17 +18,45 @@ steps:
     commands:
       - terraform init
       - terraform plan
+  before destroy:
+    image: vumay/aws-helm-kubectl
+    title: remove nginx ingress
+    stage: before destroy
+    commands:
+      - export DESTROY=$(terraform output -raw destroy)
+      - kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/aws/deploy.yaml
+     when:
+       condition:
+         all:
+           notDestroy: '"${{DESTROY}}" == "true"'
   apply:
     image: hashicorp/terraform:0.14.7
     title: Applying Terraform
     stage: apply
     commands:
-      -  terraform apply -auto-approve 
+      - terraform apply -auto-approve 
       - export CLUSTER_NAME=$(terraform output -raw cluster_name)
       - export REGION=$(terraform output -raw region)
       - export DESTROY=$(terraform output -raw destroy)
       - cf_export CLUSTER_NAME REGION DESTROY
     when:
+      branch:
+        only:
+          - master
+  apply_app:
+    image: vumay/aws-helm-kubectl
+    title: Applying apps
+    stage: apps
+    commands:
+      - export KUBECONFIG=$PWD/kubeconfig
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $REGION --alias $CLUSTER_NAME 
+      - kubectl apply --filename https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/aws/deploy.yaml
+      - kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
+      - helm upgrade --install argocd argo-cd --repo https://argoproj.github.io/argo-helm --namespace argocd --create-namespace --version 2.8.0 --values argocd-values.yaml --wait
+    when:
+      condition:
+        all:
+          notDestroy: '"${{DESTROY}}" == "false"'
       branch:
         only:
           - master
