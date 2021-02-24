@@ -1,7 +1,6 @@
 version: "1.0"
 stages:
   - prepare
-  - before destroy
   - apply
   - apps
 steps:
@@ -18,17 +17,6 @@ steps:
     commands:
       - terraform init
       - terraform plan
-  before destroy:
-    image: vumay/aws-helm-kubectl
-    title: remove nginx ingress
-    stage: before destroy
-    commands:
-      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $REGION --alias $CLUSTER_NAME
-      - kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/aws/deploy.yaml
-    when:
-      condition:
-        all:
-          whenVarExists: 'includes("${{DESTROY}}", "{{DESTROY}}") == true'
   apply:
     image: hashicorp/terraform:0.14.7
     title: Applying Terraform
