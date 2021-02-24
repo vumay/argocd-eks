@@ -28,7 +28,7 @@ steps:
     when:
       condition:
         all:
-          notDestroy: '"${{DESTROY}}" == "true"'
+          whenVarExists: 'includes("${{DESTROY}}", "{{DESTROY}}") == true'
   apply:
     image: hashicorp/terraform:0.14.7
     title: Applying Terraform
