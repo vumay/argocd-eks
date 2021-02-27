@@ -3,7 +3,6 @@ stages:
   - prepare
   - apply
   - apps
-  - istio
 
 steps:
   main_clone:
@@ -43,19 +42,6 @@ steps:
       - kubectl apply --filename https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.35.0/deploy/static/provider/aws/deploy.yaml
       - kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=120s
       - helm upgrade --install argocd argo-cd --repo https://argoproj.github.io/argo-helm --namespace argocd --create-namespace --version 2.8.0 --values argocd-values.yaml --wait
-    when:
-      condition:
-        all:
-          notDestroy: '"${{DESTROY}}" == "false"'
-      branch:
-        only:
-          - master
-  
-  deploy istio:
-    image: vumay/aws-helm-kubectl
-    title: deploy istio in cluster
-    stage: istio
-    commands:
       - export ISTIO_VERSION=1.7.8
       - curl -L https://istio.io/downloadIstio | sh -
       - cd istio-1.7.8
