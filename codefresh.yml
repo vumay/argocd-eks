@@ -60,7 +60,7 @@ steps:
       - curl -L https://istio.io/downloadIstio | sh -
       - cd istio-1.7.8
       - chmod +x ./bin/istioctl && cp ./bin/istioctl  /usr/local/bin
-      - istioctl manifest apply --set profile=default
+      - istioctl manifest apply 
       - kubectl label namespace argocd istio-injection=enabled
     when:
       condition:
