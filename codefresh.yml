@@ -52,20 +52,20 @@ steps:
           - master
   
   deploy istio:
-  image: vumay/aws-helm-kubectl
-  title: deploy istio in cluster
-  stage: istio
-  commands:
-    - export ISTIO_VERSION=1.7.8
-    - curl -L https://istio.io/downloadIstio | sh -
-    - cd istio-1.7.8
-    - sudo chmod +x ./bin/istioctl && sudo cp ./bin/istioctl  /usr/local/bin
-    - istioctl manifest apply --set profile=default
-    - kubectl label namespace argocd istio-injection=enabled
-  when:
-    condition:
-      all:
-        notDestroy: '"${{DESTROY}}" == "false"'
-    branch:
-      only:
-        - master
+    image: vumay/aws-helm-kubectl
+    title: deploy istio in cluster
+    stage: istio
+    commands:
+      - export ISTIO_VERSION=1.7.8
+      - curl -L https://istio.io/downloadIstio | sh -
+      - cd istio-1.7.8
+      - sudo chmod +x ./bin/istioctl && sudo cp ./bin/istioctl  /usr/local/bin
+      - istioctl manifest apply --set profile=default
+      - kubectl label namespace argocd istio-injection=enabled
+    when:
+      condition:
+        all:
+          notDestroy: '"${{DESTROY}}" == "false"'
+      branch:
+        only:
+          - master
