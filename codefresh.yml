@@ -47,7 +47,7 @@ steps:
       - cd istio-1.7.8
       - chmod +x ./bin/istioctl && cp ./bin/istioctl  /usr/local/bin
       - istioctl install -y
-      - kubectl label namespace argocd istio-injection=enabled
+      - kubectl label namespace argocd istio-injection=enabled --overwrite
     when:
       condition:
         all:
